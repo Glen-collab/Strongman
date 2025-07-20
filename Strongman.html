@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strongman Competition Scoresheet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .input-group input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .input-group input:focus {
+            border-color: #007bff;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+            width: 100%;
+            margin-top: 8px;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        
+        .controls-row {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .leaderboard {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .leaderboard h3 {
+            margin-bottom: 12px;
+            color: #495057;
+            font-size: 18px;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .leaderboard-item.first { border-left-color: #ffd700; }
+        .leaderboard-item.second { border-left-color: #c0c0c0; }
+        .leaderboard-item.third { border-left-color: #cd7f32; }
+        
+        .athlete-name {
+            font-weight: 800;
+            color: #495057;
+            font-size: 16px;
+        }
+        
+        .total-points {
+            background: #007bff;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .events-section {
+            padding: 20px;
+        }
+        
+        .events-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .events-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .event-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .add-event-btn {
+            background: #28a745;
+            color: white;
+        }
+        
+        .add-event-btn:hover {
+            background: #1e7e34;
+            transform: scale(1.1);
+        }
+        
+        .remove-event-btn {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .remove-event-btn:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+        
+        .events-header h3 {
+            color: #495057;
+            font-size: 18px;
+        }
+        
+        .event-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+        
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .event-title {
+            font-weight: 600;
+            color: #495057;
+            font-size: 16px;
+        }
+        
+        .event-type {
+            background: #6f42c1;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .event-name-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .event-type-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            background: white;
+        }
+        
+        .athlete-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .athlete-info {
+            flex: 1;
+        }
+        
+        .athlete-name-small {
+            font-weight: 800;
+            color: #495057;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .athlete-stats {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .performance-input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+            margin-right: 8px;
+        }
+        
+        .time-inputs {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        
+        .time-input {
+            width: 40px;
+            padding: 6px 4px;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+        }
+        
+        .distance-inputs {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        
+        .distance-input {
+            width: 50px;
+            padding: 6px 4px;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+        }
+        
+        .place-badge {
+            background: #007bff;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        .place-badge.first { background: #ffd700; color: #333; }
+        .place-badge.second { background: #c0c0c0; color: #333; }
+        .place-badge.third { background: #cd7f32; color: white; }
+        
+        .no-athletes {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+        
+        .event-toggle {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .event-card.collapsed .athlete-row {
+            display: none;
+        }
+        
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #28a745;
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(40, 167, 69, 0.4);
+            z-index: 1000;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+            
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💪 Strongman Competition</h1>
+            <p>Track athletes and calculate scores</p>
+        </div>
+        
+        <div class="controls">
+            <div class="input-group">
+                <input type="text" id="newAthleteName" placeholder="Enter athlete name" onkeypress="if(event.key==='Enter') addAthlete()">
+            </div>
+            <div class="controls-row">
+                <button class="btn btn-primary" onclick="addAthlete()">Add Athlete</button>
+                <button class="btn btn-danger" onclick="removeLastAthlete()">Remove Last</button>
+            </div>
+            <button class="btn btn-success" onclick="calculateScores()">🏆 Calculate Scores</button>
+        </div>
+        
+        <div class="leaderboard" id="leaderboard" style="display: none;">
+            <h3>🏆 Leaderboard</h3>
+            <div id="leaderboardList"></div>
+        </div>
+        
+        <div class="events-section">
+            <div class="events-header">
+                <h3>Events</h3>
+                <div class="events-controls">
+                    <button class="event-btn remove-event-btn" onclick="removeEvent()" title="Remove Event">−</button>
+                    <button class="event-btn add-event-btn" onclick="addEvent()" title="Add Event">+</button>
+                </div>
+            </div>
+            
+            <div id="eventsContainer">
+                <!-- Events will be generated here -->
+            </div>
+        </div>
+        
+        <div id="noAthletesMessage" class="no-athletes">
+            <h3>👤 No Athletes Yet</h3>
+            <p>Add some athletes to get started!</p>
+        </div>
+    </div>
+
+    <script>
+        let athletes = [];
+        let events = [
+            { name: "Deadlift Max", type: "weight" },
+            { name: "Log Press", type: "weight" },
+            { name: "Farmer's Walk", type: "time" },
+            { name: "Atlas Stones", type: "reps" },
+            { name: "Keg Throw", type: "distance" },
+            { name: "Yoke Walk", type: "time" },
+            { name: "Car Deadlift", type: "weight" }
+        ];
+        
+        function addEvent() {
+            events.push({
+                name: `Event ${events.length + 1}`,
+                type: "weight"
+            });
+            
+            // Add empty performance data for all existing athletes
+            athletes.forEach(athlete => {
+                athlete.performances.push("");
+                athlete.places.push(0);
+                athlete.points.push(0);
+            });
+            
+            renderEvents();
+        }
+        
+        function removeEvent() {
+            if (events.length > 1) {
+                events.pop();
+                
+                // Remove performance data from all athletes
+                athletes.forEach(athlete => {
+                    athlete.performances.pop();
+                    athlete.places.pop();
+                    athlete.points.pop();
+                    // Recalculate total
+                    athlete.total = athlete.points.reduce((sum, points) => sum + points, 0);
+                });
+                
+                renderEvents();
+                updateLeaderboard();
+            } else {
+                alert("You must have at least one event!");
+            }
+        }
+        
+        function addAthlete() {
+            const nameInput = document.getElementById('newAthleteName');
+            const name = nameInput.value.trim();
+            
+            if (name !== "") {
+                athletes.push({
+                    name: name,
+                    performances: new Array(events.length).fill(""),
+                    places: new Array(events.length).fill(0),
+                    points: new Array(events.length).fill(0),
+                    total: 0
+                });
+                nameInput.value = "";
+                renderEvents();
+                updateNoAthletesMessage();
+            } else {
+                alert("Please enter an athlete name first!");
+            }
+        }
+        
+        function removeLastAthlete() {
+            if (athletes.length > 0) {
+                athletes.pop();
+                renderEvents();
+                updateNoAthletesMessage();
+                updateLeaderboard();
+            }
+        }
+        
+        function updateNoAthletesMessage() {
+            const message = document.getElementById('noAthletesMessage');
+            message.style.display = athletes.length === 0 ? 'block' : 'none';
+        }
+        
+        function renderEvents() {
+            const container = document.getElementById('eventsContainer');
+            container.innerHTML = '';
+            
+            events.forEach((event, eventIndex) => {
+                const eventCard = document.createElement('div');
+                eventCard.className = 'event-card';
+                eventCard.id = `event-${eventIndex}`;
+                
+                const typeLabels = {
+                    'weight': 'Max Weight',
+                    'time': 'Fastest Time',
+                    'reps': 'Most Reps',
+                    'distance': 'Max Distance',
+                    'height': 'Max Height'
+                };
+                
+                eventCard.innerHTML = `
+                    <div class="event-header">
+                        <div class="event-title">Event ${eventIndex + 1}</div>
+                        <div class="event-type">${typeLabels[event.type]}</div>
+                    </div>
+                    
+                    <input type="text" class="event-name-input" value="${event.name}" 
+                           onchange="updateEventName(${eventIndex}, this.value)" 
+                           placeholder="Event Name">
+                    
+                    <select class="event-type-select" onchange="updateEventType(${eventIndex}, this.value)">
+                        <option value="weight" ${event.type === 'weight' ? 'selected' : ''}>Max Weight</option>
+                        <option value="time" ${event.type === 'time' ? 'selected' : ''}>Fastest Time</option>
+                        <option value="reps" ${event.type === 'reps' ? 'selected' : ''}>Most Reps</option>
+                        <option value="distance" ${event.type === 'distance' ? 'selected' : ''}>Max Distance</option>
+                        <option value="height" ${event.type === 'height' ? 'selected' : ''}>Max Height</option>
+                    </select>
+                    
+                    <div id="athletes-${eventIndex}">
+                        ${renderAthletesForEvent(eventIndex)}
+                    </div>
+                `;
+                
+                container.appendChild(eventCard);
+            });
+        }
+        
+        function renderAthletesForEvent(eventIndex) {
+            if (athletes.length === 0) return '';
+            
+            return athletes.map((athlete, athleteIndex) => {
+                const performance = athlete.performances[eventIndex];
+                const place = athlete.places[eventIndex];
+                const points = athlete.points[eventIndex];
+                const eventType = events[eventIndex].type;
+                
+                let performanceInput = '';
+                
+                if (eventType === 'time') {
+                    let minutes = 0, seconds = 0, hundredths = 0;
+                    if (performance && typeof performance === 'number') {
+                        minutes = Math.floor(performance / 60);
+                        const remainingSeconds = performance % 60;
+                        seconds = Math.floor(remainingSeconds);
+                        hundredths = Math.round((remainingSeconds - seconds) * 100);
+                    }
+                    
+                    performanceInput = `
+                        <div class="time-inputs">
+                            <input type="number" class="time-input" min="0" value="${minutes || ''}" 
+                                   placeholder="m" onchange="updateTimePerformance(${athleteIndex}, ${eventIndex}, 'minutes', this.value)">
+                            <span>:</span>
+                            <input type="number" class="time-input" min="0" max="59" value="${seconds || ''}" 
+                                   placeholder="s" onchange="updateTimePerformance(${athleteIndex}, ${eventIndex}, 'seconds', this.value)">
+                            <span>.</span>
+                            <input type="number" class="time-input" min="0" max="99" value="${hundredths || ''}" 
+                                   placeholder="00" onchange="updateTimePerformance(${athleteIndex}, ${eventIndex}, 'hundredths', this.value)">
+                        </div>
+                    `;
+                } else if (eventType === 'distance') {
+                    let feet = 0, inches = 0;
+                    if (performance && typeof performance === 'number') {
+                        feet = Math.floor(performance / 12);
+                        inches = Math.round((performance % 12) * 10) / 10;
+                    }
+                    
+                    performanceInput = `
+                        <div class="distance-inputs">
+                            <input type="number" class="distance-input" min="0" value="${feet || ''}" 
+                                   placeholder="ft" onchange="updateDistancePerformance(${athleteIndex}, ${eventIndex}, 'feet', this.value)">
+                            <span>ft</span>
+                            <input type="number" class="distance-input" min="0" max="11.9" step="0.1" value="${inches || ''}" 
+                                   placeholder="in" onchange="updateDistancePerformance(${athleteIndex}, ${eventIndex}, 'inches', this.value)">
+                            <span>in</span>
+                        </div>
+                    `;
+                } else {
+                    const displayValue = performance !== "" && performance !== null && performance !== undefined ? performance : "";
+                    performanceInput = `
+                        <input type="number" class="performance-input" step="0.01" value="${displayValue}" 
+                               placeholder="Value" onchange="updatePerformance(${athleteIndex}, ${eventIndex}, this.value)">
+                    `;
+                }
+                
+                const placeClass = place === 1 ? 'first' : place === 2 ? 'second' : place === 3 ? 'third' : '';
+                
+                return `
+                    <div class="athlete-row">
+                        <div class="athlete-info">
+                            <div class="athlete-name-small">${athlete.name}</div>
+                            <div class="athlete-stats">
+                                ${place > 0 ? `${getOrdinal(place)} place` : 'No score'} • ${points} pts
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            ${performanceInput}
+                            ${place > 0 ? `<div class="place-badge ${placeClass}">${place}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateEventName(eventIndex, name) {
+            events[eventIndex].name = name;
+        }
+        
+        function updateEventType(eventIndex, type) {
+            events[eventIndex].type = type;
+            
+            // Clear performances for this event
+            athletes.forEach(athlete => {
+                athlete.performances[eventIndex] = "";
+                athlete.places[eventIndex] = 0;
+                athlete.points[eventIndex] = 0;
+            });
+            
+            renderEvents();
+        }
+        
+        function updatePerformance(athleteIndex, eventIndex, value) {
+            const parsedValue = value === "" ? "" : (parseFloat(value) || "");
+            athletes[athleteIndex].performances[eventIndex] = parsedValue;
+        }
+        
+        function updateTimePerformance(athleteIndex, eventIndex, unit, value) {
+            const athlete = athletes[athleteIndex];
+            let currentTotalSeconds = athlete.performances[eventIndex] || 0;
+            
+            let currentMinutes = Math.floor(currentTotalSeconds / 60);
+            let remainingSeconds = currentTotalSeconds % 60;
+            let currentSeconds = Math.floor(remainingSeconds);
+            let currentHundredths = Math.round((remainingSeconds - currentSeconds) * 100);
+            
+            if (unit === 'minutes') {
+                currentMinutes = parseFloat(value) || 0;
+            } else if (unit === 'seconds') {
+                currentSeconds = parseFloat(value) || 0;
+            } else if (unit === 'hundredths') {
+                currentHundredths = parseFloat(value) || 0;
+            }
+            
+            const newTotalSeconds = currentMinutes * 60 + currentSeconds + (currentHundredths / 100);
+            athlete.performances[eventIndex] = newTotalSeconds > 0 ? newTotalSeconds : "";
+        }
+        
+        function updateDistancePerformance(athleteIndex, eventIndex, unit, value) {
+            const athlete = athletes[athleteIndex];
+            let currentTotalInches = athlete.performances[eventIndex] || 0;
+            
+            let currentFeet = Math.floor(currentTotalInches / 12);
+            let currentInches = currentTotalInches % 12;
+            
+            if (unit === 'feet') {
+                currentFeet = parseFloat(value) || 0;
+            } else if (unit === 'inches') {
+                currentInches = parseFloat(value) || 0;
+            }
+            
+            const newTotalInches = currentFeet * 12 + currentInches;
+            athlete.performances[eventIndex] = newTotalInches > 0 ? newTotalInches : "";
+        }
+        
+        function calculateScores() {
+            // Calculate places for each event
+            for (let eventIndex = 0; eventIndex < events.length; eventIndex++) {
+                const eventType = events[eventIndex].type;
+                const performances = athletes.map((athlete, index) => {
+                    let value = athlete.performances[eventIndex];
+                    
+                    if (typeof value === 'string' && value !== "") {
+                        value = parseFloat(value) || 0;
+                    } else if (typeof value !== 'number') {
+                        value = 0;
+                    }
+                    
+                    return { index: index, value: value };
+                });
+                
+                const validPerformances = performances.filter(p => {
+                    const originalValue = athletes[p.index].performances[eventIndex];
+                    return p.value > 0 && originalValue !== "";
+                });
+                
+                if (eventType === 'time') {
+                    validPerformances.sort((a, b) => a.value - b.value);
+                } else {
+                    validPerformances.sort((a, b) => b.value - a.value);
+                }
+                
+                athletes.forEach(athlete => {
+                    athlete.places[eventIndex] = 0;
+                    athlete.points[eventIndex] = 0;
+                });
+                
+                validPerformances.forEach((performance, place) => {
+                    const athleteIndex = performance.index;
+                    athletes[athleteIndex].places[eventIndex] = place + 1;
+                    const points = Math.max(1, events.length + 1 - place);
+                    athletes[athleteIndex].points[eventIndex] = points;
+                });
+            }
+            
+            // Calculate total points
+            athletes.forEach(athlete => {
+                athlete.total = athlete.points.reduce((sum, points) => sum + points, 0);
+            });
+            
+            renderEvents();
+            updateLeaderboard();
+        }
+        
+        function updateLeaderboard() {
+            const leaderboard = document.getElementById('leaderboard');
+            const leaderboardList = document.getElementById('leaderboardList');
+            
+            if (athletes.length === 0) {
+                leaderboard.style.display = 'none';
+                return;
+            }
+            
+            const sortedAthletes = [...athletes].sort((a, b) => b.total - a.total);
+            
+            leaderboardList.innerHTML = sortedAthletes.map((athlete, index) => {
+                const placeClass = index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '';
+                return `
+                    <div class="leaderboard-item ${placeClass}">
+                        <div>
+                            <div class="athlete-name">${index + 1}. ${athlete.name}</div>
+                        </div>
+                        <div class="total-points">${athlete.total} pts</div>
+                    </div>
+                `;
+            }).join('');
+            
+            leaderboard.style.display = 'block';
+        }
+        
+        function getOrdinal(num) {
+            const suffixes = ['th', 'st', 'nd', 'rd'];
+            const v = num % 100;
+            return num + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
+        }
+        
+        // Initialize
+        updateNoAthletesMessage();
+        renderEvents();
+    </script>
+</body>
+</html>
